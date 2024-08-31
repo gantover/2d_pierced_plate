@@ -1,0 +1,14 @@
+#!/bin/bash
+
+PROGRAM_PATH="./executable_to_wrap"
+
+stop_program() {
+    echo "wrapper> Sending SIGTERM to program"
+    pkill -SIGTERM -f "$PROGRAM_PATH"
+}
+
+$PROGRAM_PATH &
+
+read -p "wrapper> Press ENTER to send SIGTERM to the program" 
+
+stop_program

@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# download reference matrices (m=3)
+
+rm -rf ./compare_mat/*.5.txt
+wget -P compare_mat http://metronu.ulb.ac.be/MATH-H-301/prdat/5/ia.5.txt
+wget -P compare_mat http://metronu.ulb.ac.be/MATH-H-301/prdat/5/ja.5.txt
+wget -P compare_mat http://metronu.ulb.ac.be/MATH-H-301/prdat/5/a.5.txt
+
+# download and install slepc, petsc, primme
+
+arch=$(uname)
+arch=${arch,,}
+path=$(pwd)
+
+slepc_url="https://slepc.upv.es/download/distrib/slepc-3.20.1.tar.gz"
+petsc_url="https://web.cels.anl.gov/projects/petsc/download/release-snapshots/petsc-3.20.2.tar.gz"
+primme_url="https://github.com/primme/primme.git"
+primme_branch="release-1.2.2"
+
+wget $slepc_url
+tar -xzf slepc*.tar.gz
+rm -rf slepc*.tar.gz
+mv slepc-*/ slepc
+
+wget $petsc_url
+tar -xzf petsc*.tar.gz
+rm -rf petsc*.tar.gz
+mv petsc-*/ petsc 
+
+git clone --branch $primme_branch --single-branch $primme_url 
+
+PETSC_DIR="$path/petsc"
+PETSC_ARCH="arch-$arch-c-debug"
+SLEPC_DIR="$path/slepc"
+
+export PETSC_DIR
+export SLEPC_DIR
+export PETSC_ARCH
+
+printf "PETSC_DIR=%s\n" "$PETSC_DIR" > libsources
+printf "PETSC_ARCH=%s\n" "$PETSC_ARCH" >> libsources
+printf "SLEPC_DIR=%s" "$SLEPC_DIR" >> libsources
+
+cd ./petsc
+./configure --with-cc=gcc --with-mpi=0 --with-fc=gfortran --with-shared-libraries --with-debugging=0 --download-blopex=1
+make all
+make check
+
+cd ../slepc
+./configure --download-blopex
+make
+make check
+
+cd ../primme
+make
+
+echo "the installation is done"
