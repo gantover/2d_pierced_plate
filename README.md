@@ -3,4 +3,8 @@ Numerical calculation of eigenvalue for the fundamental osciliation frequency wi
 
 ### Installation
 
-The `install` shell script was meant to work for Ubuntu LTS 20.04
+[./INSTRUCTIONS.pdf](https://github.com/gantover/2d_pierced_plate/blob/main/INSTRUCTIONS.pdf) guides you through the installation process.
+
+> The `install` shell script was meant to work for Ubuntu LTS 20.04
+
+
